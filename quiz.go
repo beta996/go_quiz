@@ -19,6 +19,8 @@ type QA struct {
 
 func main() {
 	file, err := getFileName()
+	timeSec := getTimerTime()
+	flag.Parse()
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -31,13 +33,13 @@ func main() {
 	defer f.Close()
 	content := parseCsv(readCsv(f))
 	score := 0
-	fmt.Println("Press enter to start the timer...")
+	fmt.Printf("Press enter to start the timer (%d)...\n", timeSec)
 	for {
 		if takeUserAnswer() != "" {
 			break
 		}
 	}
-	timer1 := time.NewTimer(time.Duration(getTimerTime()) * time.Second)
+	timer1 := time.NewTimer(time.Duration(timeSec) * time.Second)
 	go func() {
 		<-timer1.C
 		fmt.Printf("Time is up!")
@@ -71,7 +73,7 @@ func takeUserAnswer() string {
 
 func getFileName() (string, error) {
 	filePtr := flag.String("file", "problems.csv", "A file used for the quiz")
-	flag.Parse()
+	//flag.Parse()
 	fmt.Printf("File passed is %s\n", *filePtr)
 	if strings.HasSuffix(*filePtr, ".csv") == false {
 		return "", errors.New("Not a csv file!\n")
@@ -80,8 +82,7 @@ func getFileName() (string, error) {
 }
 func getTimerTime() int {
 	timePtr := flag.Int("timer", 20, "A time in seconds to finish the quiz")
-	flag.Parse()
-	fmt.Printf("Time is %d second\n", *timePtr)
+	//flag.Parse()
 	return *timePtr
 }
 func readCsv(f *os.File) [][]string {
